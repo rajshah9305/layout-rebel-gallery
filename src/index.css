@@ -137,8 +137,42 @@
   .focus-ring {
     @apply ring-2 ring-primary ring-offset-2 ring-offset-background outline-none;
   }
+  
+  /* New Animation Classes */
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/10 border border-white/20;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-sky-500 to-purple-500 bg-clip-text text-transparent;
+  }
 }
 
+@keyframes scale-up {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Existing Panorama Styles */
 .image-panorama {
   height: 65vh;
   overflow-x: auto;
@@ -171,6 +205,11 @@
   display: inline-block;
   height: 100%;
   scroll-snap-align: center;
+  transition: transform 0.5s ease;
+}
+
+.image-panorama-item:hover {
+  transform: scale(1.02);
 }
 
 .panorama-img {
@@ -178,6 +217,7 @@
   object-fit: cover;
 }
 
+/* Staggered Grid Styles */
 .staggered-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -193,6 +233,7 @@
   grid-column: span 2;
 }
 
+/* Hero Split Styles */
 .hero-split {
   position: relative;
   height: calc(100vh - 80px);
@@ -204,7 +245,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  transition: width 0.5s ease;
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-pane-left {
@@ -217,14 +258,7 @@
   width: 50%;
 }
 
-.hero-pane:hover {
-  width: 60%;
-}
-
-.hero-pane:hover + .hero-pane {
-  width: 40%;
-}
-
+/* Image Caption Styles */
 .image-caption {
   position: absolute;
   bottom: 0;
@@ -234,9 +268,28 @@
   background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
   color: white;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translateY(10px);
 }
 
 .image-container:hover .image-caption {
   opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fade-in 0.8s ease forwards;
+}
+
+.animate-scale-up {
+  animation: scale-up 0.5s ease forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

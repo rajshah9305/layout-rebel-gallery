@@ -2,6 +2,7 @@
 import React from 'react';
 import { GalleryImage } from '@/data/galleryData';
 import { cn } from '@/lib/utils';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface ImageCardProps {
   image: GalleryImage;
@@ -13,23 +14,34 @@ const ImageCard = ({ image, onClick, className }: ImageCardProps) => {
   return (
     <div 
       className={cn(
-        "relative rounded-lg overflow-hidden shadow-md group cursor-pointer transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl",
+        "relative rounded-lg overflow-hidden shadow-lg group cursor-pointer",
+        "transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl",
+        "bg-white dark:bg-mountain-900",
         className
       )}
       onClick={onClick}
     >
-      <div className="aspect-[4/3] overflow-hidden">
-        <img 
-          src={image.src} 
-          alt={image.alt}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
+      <div className="overflow-hidden">
+        <AspectRatio ratio={4/3}>
+          <img 
+            src={image.src} 
+            alt={image.alt}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          />
+        </AspectRatio>
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-        <div className="p-4 text-white w-full">
-          <p className="text-sm font-medium">{image.alt}</p>
-          <span className="text-xs text-sky-300 mt-1 inline-block">#{image.category}</span>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+          <p className="font-medium text-lg">{image.alt}</p>
+          <span className="inline-block bg-sky-500/80 text-xs text-white px-2 py-0.5 rounded-full mt-2 backdrop-blur-sm">
+            #{image.category}
+          </span>
         </div>
+      </div>
+      
+      {/* Subtle glow effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/10 to-white/5 mix-blend-overlay"></div>
       </div>
     </div>
   );
