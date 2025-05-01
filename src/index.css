@@ -1,10 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 50% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -13,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 212 80% 42%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 217 43% 45%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 220 70% 90%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -35,24 +36,17 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
 
     --card: 222.2 84% 4.9%;
@@ -61,7 +55,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -79,6 +73,7 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -97,5 +92,151 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+@layer components {
+  .backdrop-blur-header {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  .parallax-image-container {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .parallax-image {
+    transition: transform 0.3s ease-out;
+  }
+
+  .honeycomb {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 10px;
+  }
+
+  .honeycomb-item {
+    grid-column: span 2;
+    transition: all 0.5s ease;
+  }
+
+  .honeycomb-item:nth-child(3n - 2) {
+    grid-column: span 3;
+  }
+
+  .hexagon-clip {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
+  .circle-clip {
+    clip-path: circle(50% at 50% 50%);
+  }
+
+  .focus-ring {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background outline-none;
+  }
+}
+
+.image-panorama {
+  height: 65vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.image-panorama::-webkit-scrollbar {
+  height: 8px;
+}
+
+.image-panorama::-webkit-scrollbar-track {
+  background: theme('colors.mountain.200');
+  border-radius: 8px;
+}
+
+.image-panorama::-webkit-scrollbar-thumb {
+  background: theme('colors.sky.500');
+  border-radius: 8px;
+}
+
+.image-panorama::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.sky.600');
+}
+
+.image-panorama-item {
+  display: inline-block;
+  height: 100%;
+  scroll-snap-align: center;
+}
+
+.panorama-img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.staggered-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-auto-rows: 350px;
+  gap: 15px;
+}
+
+.staggered-grid-item:nth-child(3n+1) {
+  grid-row: span 2;
+}
+
+.staggered-grid-item:nth-child(4n+2) {
+  grid-column: span 2;
+}
+
+.hero-split {
+  position: relative;
+  height: calc(100vh - 80px);
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero-pane {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.hero-pane-left {
+  left: 0;
+  width: 50%;
+}
+
+.hero-pane-right {
+  right: 0;
+  width: 50%;
+}
+
+.hero-pane:hover {
+  width: 60%;
+}
+
+.hero-pane:hover + .hero-pane {
+  width: 40%;
+}
+
+.image-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-container:hover .image-caption {
+  opacity: 1;
 }
