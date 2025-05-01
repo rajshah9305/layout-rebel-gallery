@@ -1,6 +1,8 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { GalleryImage } from '@/data/galleryData';
+import { Loader2, ImageOff } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface PanoramaGalleryProps {
   images: GalleryImage[];
@@ -12,6 +14,7 @@ const PanoramaGallery = ({ images, title }: PanoramaGalleryProps) => {
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [imageLoaded, setImageLoaded] = useState<Record<string, boolean>>({});
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -102,6 +105,30 @@ const PanoramaGallery = ({ images, title }: PanoramaGalleryProps) => {
     setImageErrors(prev => ({ ...prev, [imageId]: true }));
   };
 
+  const handleImageLoad = (imageId: string) => {
+    setImageLoaded(prev => ({ ...prev, [imageId]: true }));
+  };
+
+  // Generate a gradient based on the category
+  const getCategoryGradient = (category: string) => {
+    switch (category) {
+      case 'mountains':
+        return 'from-blue-300 to-green-200 dark:from-blue-900 dark:to-green-800';
+      case 'sunset':
+        return 'from-orange-300 to-red-200 dark:from-orange-900 dark:to-red-800';
+      case 'night':
+        return 'from-indigo-300 to-purple-200 dark:from-indigo-900 dark:to-purple-800';
+      case 'water':
+        return 'from-sky-300 to-cyan-200 dark:from-sky-900 dark:to-cyan-800';
+      case 'skies':
+        return 'from-sky-300 to-indigo-200 dark:from-sky-900 dark:to-indigo-800';
+      case 'cityscape':
+        return 'from-gray-300 to-slate-200 dark:from-gray-800 dark:to-slate-700';
+      default:
+        return 'from-sky-300 to-mountain-200 dark:from-sky-900 dark:to-mountain-800';
+    }
+  };
+
   return (
     <section className="my-12 overflow-hidden">
       <h2 
@@ -128,16 +155,35 @@ const PanoramaGallery = ({ images, title }: PanoramaGalleryProps) => {
             className="image-panorama-item relative overflow-hidden group/item"
           >
             {imageErrors[image.id] ? (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 to-mountain-100 dark:from-sky-900 dark:to-mountain-900">
-                <p className="text-mountain-500 dark:text-mountain-300">Image not available</p>
+              <div className={cn(
+                "w-full h-full flex flex-col items-center justify-center bg-gradient-to-br",
+                getCategoryGradient(image.category)
+              )}>
+                <ImageOff className="h-8 w-8 text-white/70 mb-2" />
+                <p className="text-white font-medium">{image.alt}</p>
               </div>
             ) : (
-              <img 
-                src={image.src} 
-                alt={image.alt} 
-                onError={() => handleImageError(image.id)}
-                className="panorama-img transition-transform duration-700 group-hover/item:scale-105"
-              />
+              <>
+                {!imageLoaded[image.id] && (
+                  <div className={cn(
+                    "absolute inset-0 flex items-center justify-center bg-gradient-to-br z-10",
+                    getCategoryGradient(image.category)
+                  )}>
+                    <Loader2 className="h-8 w-8 text-white animate-spin" />
+                  </div>
+                )}
+                <img 
+                  src={image.src} 
+                  alt={image.alt} 
+                  onError={() => handleImageError(image.id)}
+                  onLoad={() => handleImageLoad(image.id)}
+                  className={cn(
+                    "panorama-img transition-transform duration-700 group-hover/item:scale-105",
+                    !imageLoaded[image.id] ? "opacity-0" : "opacity-100",
+                    "transition-opacity duration-300"
+                  )}
+                />
+              </>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex items-end">
               <div className="p-4 text-white">

@@ -12,6 +12,13 @@ const Index = () => {
   const skyImages = [...getImagesByCategory('skies'), ...getImagesByCategory('sunset')].slice(0, 4);
   const featuredImages = getFeaturedImages();
   
+  // Use more reliable images for hero section
+  const nightImage = galleryImages.find(img => img.category === 'night' && img.id === '2')?.src || 
+    'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80';
+  
+  const sunsetImage = galleryImages.find(img => img.category === 'sunset' && img.id === '17')?.src || 
+    'https://images.unsplash.com/photo-1436891620584-47fd0e565afb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80';
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -19,8 +26,8 @@ const Index = () => {
       <main className="flex-grow pt-16">
         {/* Hero Section */}
         <HeroSplit 
-          leftImage="/lovable-uploads/576d2d8d-8fec-4b60-bdba-fdce7006006a.png"
-          rightImage="/lovable-uploads/fdfbef51-6f36-492a-80d0-986347bfa834.png"
+          leftImage={nightImage}
+          rightImage={sunsetImage}
           leftTitle="Night Skies"
           rightTitle="Vibrant Sunsets"
           leftPath="/category/night"
@@ -68,6 +75,13 @@ const Index = () => {
                   src={image.src} 
                   alt={image.alt} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    console.log(`Failed to load sky collection image: ${image.src}`);
+                    target.parentElement?.classList.add('bg-gradient-to-br', 'from-sky-300', 'to-purple-200');
+                    target.style.display = 'none';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                   <p className="text-white font-medium">{image.alt}</p>
