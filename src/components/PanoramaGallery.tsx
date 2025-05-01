@@ -11,6 +11,7 @@ const PanoramaGallery = ({ images, title }: PanoramaGalleryProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -95,6 +96,11 @@ const PanoramaGallery = ({ images, title }: PanoramaGalleryProps) => {
       }, 30);
     }
   };
+  
+  const handleImageError = (imageId: string) => {
+    console.log(`Failed to load image in panorama: ${imageId}`);
+    setImageErrors(prev => ({ ...prev, [imageId]: true }));
+  };
 
   return (
     <section className="my-12 overflow-hidden">
@@ -121,11 +127,18 @@ const PanoramaGallery = ({ images, title }: PanoramaGalleryProps) => {
             key={image.id} 
             className="image-panorama-item relative overflow-hidden group/item"
           >
-            <img 
-              src={image.src} 
-              alt={image.alt} 
-              className="panorama-img transition-transform duration-700 group-hover/item:scale-105"
-            />
+            {imageErrors[image.id] ? (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 to-mountain-100 dark:from-sky-900 dark:to-mountain-900">
+                <p className="text-mountain-500 dark:text-mountain-300">Image not available</p>
+              </div>
+            ) : (
+              <img 
+                src={image.src} 
+                alt={image.alt} 
+                onError={() => handleImageError(image.id)}
+                className="panorama-img transition-transform duration-700 group-hover/item:scale-105"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex items-end">
               <div className="p-4 text-white">
                 <p className="font-medium text-lg transform translate-y-4 group-hover/item:translate-y-0 transition-transform duration-300">{image.alt}</p>

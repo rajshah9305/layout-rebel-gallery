@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { GalleryImage } from '@/data/galleryData';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import ImageCard from './ImageCard';
 
 interface StaggeredGridProps {
   images: GalleryImage[];
@@ -12,6 +13,7 @@ interface StaggeredGridProps {
 const StaggeredGrid = ({ images, title }: StaggeredGridProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [animatedImages, setAnimatedImages] = useState<string[]>([]);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   
   // Staggered animation on mount
   useEffect(() => {
@@ -45,6 +47,10 @@ const StaggeredGrid = ({ images, title }: StaggeredGridProps) => {
   const closeModal = () => {
     setSelectedImage(null);
   };
+  
+  const handleImageError = (imageId: string) => {
+    setImageErrors(prev => ({ ...prev, [imageId]: true }));
+  };
 
   return (
     <section className="my-12 px-4">
@@ -63,28 +69,14 @@ const StaggeredGrid = ({ images, title }: StaggeredGridProps) => {
               "staggered-grid-item overflow-hidden rounded-lg relative group",
               animatedImages.includes(image.id) ? "animate-fade-in opacity-100" : "opacity-0"
             )}
-            onClick={() => handleImageClick(image)}
             style={{ 
               transitionDelay: `${animatedImages.indexOf(image.id) * 50}ms`,
             }}
           >
-            <div className="image-container h-full w-full relative cursor-pointer">
-              <AspectRatio ratio={4/3} className="h-full">
-                <img 
-                  src={image.src} 
-                  alt={image.alt} 
-                  className="w-full h-full object-cover transition-all duration-700 ease-in-out group-hover:scale-110 rounded-lg"
-                />
-              </AspectRatio>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end">
-                <div className="p-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                  <p className="text-white text-lg font-medium">{image.alt}</p>
-                  <span className="inline-block bg-sky-500/80 text-white text-xs px-2 py-1 mt-2 rounded-full backdrop-blur-sm">
-                    #{image.category}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <ImageCard
+              image={image}
+              onClick={() => handleImageClick(image)}
+            />
           </div>
         ))}
       </div>
@@ -101,7 +93,8 @@ const StaggeredGrid = ({ images, title }: StaggeredGridProps) => {
           >
             <img 
               src={selectedImage.src} 
-              alt={selectedImage.alt} 
+              alt={selectedImage.alt}
+              onError={() => handleImageError(selectedImage.id)}
               className="max-w-full max-h-[85vh] object-contain mx-auto rounded-lg shadow-2xl"
             />
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white rounded-b-lg">

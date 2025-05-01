@@ -22,6 +22,8 @@ const HeroSplit = ({
 }: HeroSplitProps) => {
   const [activePane, setActivePane] = useState<'left' | 'right' | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [leftImageError, setLeftImageError] = useState(false);
+  const [rightImageError, setRightImageError] = useState(false);
   
   useEffect(() => {
     // Trigger entrance animation after a short delay
@@ -31,6 +33,16 @@ const HeroSplit = ({
     
     return () => clearTimeout(timer);
   }, []);
+  
+  const handleLeftImageError = () => {
+    console.log(`Failed to load left hero image: ${leftImage}`);
+    setLeftImageError(true);
+  };
+  
+  const handleRightImageError = () => {
+    console.log(`Failed to load right hero image: ${rightImage}`);
+    setRightImageError(true);
+  };
   
   return (
     <div className={cn(
@@ -48,14 +60,21 @@ const HeroSplit = ({
         onMouseLeave={() => setActivePane(null)}
       >
         <div className="w-full h-full relative overflow-hidden">
-          <img 
-            src={leftImage} 
-            alt={leftTitle} 
-            className={cn(
-              "w-full h-full object-cover transition-transform duration-700",
-              activePane === 'left' ? 'scale-105' : 'scale-100'
-            )}
-          />
+          {leftImageError ? (
+            <div className="w-full h-full bg-gradient-to-br from-sky-700 to-sky-900 flex items-center justify-center">
+              <p className="text-white text-xl">Night Skies</p>
+            </div>
+          ) : (
+            <img 
+              src={leftImage} 
+              alt={leftTitle} 
+              onError={handleLeftImageError}
+              className={cn(
+                "w-full h-full object-cover transition-transform duration-700",
+                activePane === 'left' ? 'scale-105' : 'scale-100'
+              )}
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
           <div className={cn(
             "absolute bottom-0 left-0 w-full p-8 text-white transition-all duration-700",
@@ -88,14 +107,21 @@ const HeroSplit = ({
         onMouseLeave={() => setActivePane(null)}
       >
         <div className="w-full h-full relative overflow-hidden">
-          <img 
-            src={rightImage} 
-            alt={rightTitle} 
-            className={cn(
-              "w-full h-full object-cover transition-transform duration-700",
-              activePane === 'right' ? 'scale-105' : 'scale-100'
-            )}
-          />
+          {rightImageError ? (
+            <div className="w-full h-full bg-gradient-to-br from-sunset-700 to-sunset-500 flex items-center justify-center">
+              <p className="text-white text-xl">Vibrant Sunsets</p>
+            </div>
+          ) : (
+            <img 
+              src={rightImage} 
+              alt={rightTitle} 
+              onError={handleRightImageError}
+              className={cn(
+                "w-full h-full object-cover transition-transform duration-700",
+                activePane === 'right' ? 'scale-105' : 'scale-100'
+              )}
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
           <div className={cn(
             "absolute bottom-0 right-0 w-full p-8 text-white text-right transition-all duration-700",

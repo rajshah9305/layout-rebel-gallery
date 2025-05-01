@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GalleryImage } from '@/data/galleryData';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -11,6 +11,13 @@ interface ImageCardProps {
 }
 
 const ImageCard = ({ image, onClick, className }: ImageCardProps) => {
+  const [imageError, setImageError] = useState(false);
+  
+  const handleImageError = () => {
+    console.log(`Failed to load image: ${image.src}`);
+    setImageError(true);
+  };
+
   return (
     <div 
       className={cn(
@@ -23,11 +30,18 @@ const ImageCard = ({ image, onClick, className }: ImageCardProps) => {
     >
       <div className="overflow-hidden">
         <AspectRatio ratio={4/3}>
-          <img 
-            src={image.src} 
-            alt={image.alt}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-          />
+          {imageError ? (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 to-mountain-100 dark:from-sky-900 dark:to-mountain-900">
+              <p className="text-mountain-500 dark:text-mountain-300 text-sm">Image not available</p>
+            </div>
+          ) : (
+            <img 
+              src={image.src} 
+              alt={image.alt}
+              onError={handleImageError}
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            />
+          )}
         </AspectRatio>
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
